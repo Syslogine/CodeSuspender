@@ -1,0 +1,7 @@
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\bin\Debug\SuspendScript.exe.config
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\bin\Debug\SuspendScript.exe
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\bin\Debug\SuspendScript.pdb
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.csproj.AssemblyReference.cache
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.csproj.CoreCompileInputs.cache
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.exe
+C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.pdb
