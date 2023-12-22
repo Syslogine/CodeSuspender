@@ -106,11 +106,8 @@ namespace SuspendProcess
 
             Random random = new Random();
 
-            for (int i = 0; i < 10; i++)
-            {
-                Console.WriteLine(messages[random.Next(messages.Length)]);
-                Thread.Sleep(2000); // Pause for 2 seconds between messages
-            }
+            // Display a single random message
+            Console.WriteLine(messages[random.Next(messages.Length)]);
         }
 
         private static Process GetProcessByName(string processName)
