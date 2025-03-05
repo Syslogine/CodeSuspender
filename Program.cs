@@ -31,8 +31,6 @@ namespace SuspendProcess
         {
             try
             {
-                // Rest of your code...
-
                 // Find the RDR2 process
                 Process rdr2Process = GetProcessByName("RDR2");
                 if (rdr2Process != null)
@@ -54,13 +52,23 @@ namespace SuspendProcess
                 {
                     Console.WriteLine("Process 'GTA5' not found.");
                 }
+
+                // Find the GTA5_Enhanced process
+                Process gta5EnhancedProcess = GetProcessByName("GTA5_Enhanced");
+                if (gta5EnhancedProcess != null)
+                {
+                    SuspendAndResumeProcess(gta5EnhancedProcess);
+                }
+                else
+                {
+                    Console.WriteLine("Process 'GTA5_Enhanced' not found.");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
-
 
         private static void SuspendAndResumeProcess(Process process)
         {
