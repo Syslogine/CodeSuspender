@@ -5,3 +5,10 @@ C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug
 C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.csproj.CoreCompileInputs.cache
 C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.exe
 C:\Users\unknown\Documents\Studio Projects\SuspendScript\SuspendScript\obj\Debug\SuspendScript.pdb
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\bin\Debug\SuspendScript.exe.config
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\bin\Debug\SuspendScript.exe
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\bin\Debug\SuspendScript.pdb
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\obj\Debug\SuspendScript.csproj.AssemblyReference.cache
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\obj\Debug\SuspendScript.csproj.CoreCompileInputs.cache
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\obj\Debug\SuspendScript.exe
+C:\Users\D0nSc\OneDrive\Documents\GitHub\CodeSuspender\obj\Debug\SuspendScript.pdb

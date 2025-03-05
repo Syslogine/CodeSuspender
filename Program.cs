@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,144 +9,154 @@ namespace SuspendProcess
 {
     class Program
     {
-        // Import Windows API functions
-        [DllImport("kernel32.dll")]
+        // Windows API imports with correct return types
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr OpenThread(ThreadAccess dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         private static extern uint SuspendThread(IntPtr hThread);
 
-        [DllImport("kernel32.dll")]
-        private static extern int ResumeThread(IntPtr hThread);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern uint ResumeThread(IntPtr hThread);
 
-        [DllImport("kernel32.dll")]
-        private static extern int CloseHandle(IntPtr hThread);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool CloseHandle(IntPtr hThread);
 
         [Flags]
-        public enum ThreadAccess : uint
+        private enum ThreadAccess : uint
         {
             THREAD_SUSPEND_RESUME = 0x0002
         }
 
+        private static readonly Random Random = new Random();
+        private static readonly string[] Messages = {
+            "Hang tight, we're working on it!",
+            "Just a moment, almost there!",
+            "Time to grab a coffee! We'll be done shortly.",
+            "Enjoy the silence... for now!",
+            "The suspense is real, isn't it?",
+            "In the world of processes, patience is a virtue.",
+            "Counting down the seconds...",
+            "This pause brought to you by the magic of debugging.",
+            "Waiting patiently, like a well-behaved thread.",
+            "Taking a moment to appreciate the beauty of code.",
+            "Loading... just kidding!",
+            "If only real life had a 'pause' button.",
+            "Analyzing bits and bytes with a magnifying glass.",
+            "Hold on, we're rearranging the electrons.",
+            "The CPU is taking a breather, and so should you.",
+            "Silence is golden, especially in the world of processes.",
+            "When in doubt, pause and reflect.",
+            "Making time for a quick power nap... just kidding!",
+            "Your patience is truly commendable.",
+            "Suspended in time, but not in progress."
+        };
+
         static void Main()
         {
+            string[] targetProcesses = { "RDR2", "GTA5", "GTA5_Enhanced" };
+            const int suspendDurationMs = 12000; // 12 seconds
+
             try
             {
-                // Find the RDR2 process
-                Process rdr2Process = GetProcessByName("RDR2");
-                if (rdr2Process != null)
-                {
-                    SuspendAndResumeProcess(rdr2Process);
-                }
-                else
-                {
-                    Console.WriteLine("Process 'RDR2' not found.");
-                }
-
-                // Find the GTA5 process
-                Process gta5Process = GetProcessByName("GTA5");
-                if (gta5Process != null)
-                {
-                    SuspendAndResumeProcess(gta5Process);
-                }
-                else
-                {
-                    Console.WriteLine("Process 'GTA5' not found.");
-                }
-
-                // Find the GTA5_Enhanced process
-                Process gta5EnhancedProcess = GetProcessByName("GTA5_Enhanced");
-                if (gta5EnhancedProcess != null)
-                {
-                    SuspendAndResumeProcess(gta5EnhancedProcess);
-                }
-                else
-                {
-                    Console.WriteLine("Process 'GTA5_Enhanced' not found.");
-                }
+                ProcessSuspender suspender = new ProcessSuspender();
+                suspender.ManageProcesses(targetProcesses, suspendDurationMs);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                Console.WriteLine($"Fatal error: {ex.Message}");
             }
         }
 
-        private static void SuspendAndResumeProcess(Process process)
+        private class ProcessSuspender
         {
-            SuspendProcess(process);
-            Console.WriteLine($"Process '{process.ProcessName}' suspended for 12 seconds.");
-
-            // Display random messages while the user is waiting
-            DisplayRandomMessages();
-
-            // Add your testing logic here if needed
-
-            Thread.Sleep(12000); // 12 seconds
-
-            ResumeProcess(process);
-            Console.WriteLine($"Process '{process.ProcessName}' resumed.");
-        }
-
-
-        private static void DisplayRandomMessages()
-        {
-            string[] messages = {
-                "Hang tight, we're working on it!",
-                "Just a moment, almost there!",
-                "Time to grab a coffee! We'll be done shortly.",
-                "Enjoy the silence... for now!",
-                "The suspense is real, isn't it?",
-                "In the world of processes, patience is a virtue.",
-                "Counting down the seconds...",
-                "This pause brought to you by the magic of debugging.",
-                "Waiting patiently, like a well-behaved thread.",
-                "Taking a moment to appreciate the beauty of code.",
-                "Loading... just kidding!",
-                "If only real life had a 'pause' button.",
-                "Analyzing bits and bytes with a magnifying glass.",
-                "Hold on, we're rearranging the electrons.",
-                "The CPU is taking a breather, and so should you.",
-                "Silence is golden, especially in the world of processes.",
-                "When in doubt, pause and reflect.",
-                "Making time for a quick power nap... just kidding!",
-                "Your patience is truly commendable.",
-                "Suspended in time, but not in progress."
-            };
-
-            Random random = new Random();
-
-            // Display a single random message
-            Console.WriteLine(messages[random.Next(messages.Length)]);
-        }
-
-        private static Process GetProcessByName(string processName)
-        {
-            return Process.GetProcessesByName(processName).FirstOrDefault();
-        }
-
-        private static void SuspendProcess(Process process)
-        {
-            foreach (ProcessThread thread in process.Threads)
+            public void ManageProcesses(IEnumerable<string> processNames, int suspendDurationMs)
             {
-                IntPtr hThread = OpenThread(ThreadAccess.THREAD_SUSPEND_RESUME, false, (uint)thread.Id);
-                if (hThread != IntPtr.Zero)
+                foreach (string processName in processNames)
                 {
-                    SuspendThread(hThread);
+                    Process process = GetProcessByName(processName);
+                    if (process == null)
+                    {
+                        Console.WriteLine($"Process '{processName}' not found.");
+                        continue;
+                    }
+
+                    try
+                    {
+                        SuspendAndResume(process, suspendDurationMs);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error handling '{processName}': {ex.Message}");
+                    }
+                    finally
+                    {
+                        process.Dispose();
+                    }
+                }
+            }
+
+            private void SuspendAndResume(Process process, int durationMs)
+            {
+                Suspend(process);
+                Console.WriteLine($"Process '{process.ProcessName}' suspended for {durationMs / 1000} seconds.");
+
+                DisplayRandomMessage();
+                Thread.Sleep(durationMs);
+
+                Resume(process);
+                Console.WriteLine($"Process '{process.ProcessName}' resumed.");
+            }
+
+            private Process GetProcessByName(string processName)
+            {
+                return Process.GetProcessesByName(processName).FirstOrDefault();
+            }
+
+            private void Suspend(Process process)
+            {
+                foreach (ProcessThread thread in process.Threads)
+                {
+                    ModifyThread(thread.Id, SuspendThread);
+                }
+            }
+
+            private void Resume(Process process)
+            {
+                foreach (ProcessThread thread in process.Threads)
+                {
+                    ModifyThread(thread.Id, ResumeThread);
+                }
+            }
+
+            private void ModifyThread(int threadId, Func<IntPtr, uint> threadAction)
+            {
+                IntPtr hThread = OpenThread(ThreadAccess.THREAD_SUSPEND_RESUME, false, (uint)threadId);
+                if (hThread == IntPtr.Zero)
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    Console.WriteLine($"Failed to open thread {threadId}. Error code: {error}");
+                    return;
+                }
+
+                try
+                {
+                    uint result = threadAction(hThread);
+                    if (result == 0xFFFFFFFF) // -1 indicates an error
+                    {
+                        int error = Marshal.GetLastWin32Error();
+                        Console.WriteLine($"Thread operation failed. Error code: {error}");
+                    }
+                }
+                finally
+                {
                     CloseHandle(hThread);
                 }
             }
-        }
 
-        private static void ResumeProcess(Process process)
-        {
-            foreach (ProcessThread thread in process.Threads)
+            private void DisplayRandomMessage()
             {
-                IntPtr hThread = OpenThread(ThreadAccess.THREAD_SUSPEND_RESUME, false, (uint)thread.Id);
-                if (hThread != IntPtr.Zero)
-                {
-                    ResumeThread(hThread);
-                    CloseHandle(hThread);
-                }
+                Console.WriteLine(Messages[Random.Next(Messages.Length)]);
             }
         }
     }
